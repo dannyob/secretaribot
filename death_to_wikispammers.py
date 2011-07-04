@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 ##
-# death_to_wikispammers.py
+# death_to_wikispammers.py - helps quickly delete spam in spuriously created userpages
 ###
-""" 
+"""death_to_wikispammers
 
 Usage: death_to_wikispammers [username]
  Downloads a list of recently created users, starting at the username given.
-
  One by one, shows their user page via STDOUT.
  Delete user page and block for spam? it asks, [y/n]
  If yes, deletes user page, blocks user for spamming
@@ -26,27 +25,10 @@ from lxml import html
 from lxml import cssselect
 import urlparse
 
-import os,sys
-if 'PYWIKIBOT_DIR' in os.environ:
-    sys.path.append(os.environ['PYWIKIBOT_DIR'])
-try:
-    import userlib
-    import wikipedia
-except ImportError:
-    if 'PYWIKIBOT_DIR' in os.environ:
-        print """
-        **** 
-        Cannot find Pywikipediabot libraries (was looking in $PYWIKIBOT_DIR - %s).
-        ****""" % os.environ["PYWIKIBOT_DIR"]
-    else:
-        print """
-        ****
-        Cannot find Pywikipediabot libraries. Suggest you check them out from 
-        http://pywikipediabot.sourceforge.net/ , and then set PYWIKIBOT_DIR environment 
-        variable to point to their directory
-        ****"""
-    raise
+import os
 
+from pywikipediabot import wikipedia
+import userlib # pywikipedia userlib should be on sys.path thanks to pywikipediabot
 
 class UserFromUserList(userlib.User):
     """ Subclassed wikipedia user. 
