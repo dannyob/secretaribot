@@ -116,7 +116,7 @@ def main(args):
     if len(args) > 0:
         lastUser = args[0]
     else:
-        lastUser = 'Ovalutopia87'
+        lastUser = 'SysFreak'
     list_last_users = urlparse.urljoin(noisebridge.siteinfo()['base'], noisebridge.get_address("Special:ListUsers"))
     f = list_last_users+'&username=%s&creationSort=1&limit=500' % lastUser
     print f
