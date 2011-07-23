@@ -26,3 +26,10 @@ Meta-helper script to write the README in this directory to the Secretaribot pag
 
 Looks for and loads the pywikipediabot library from environment variable
 $PYWIKIBOT_DIR.
+
+### www_watch.py ###
+
+Goes out and checks a Wikipedia table full of links, and saves the etags from
+the headers; by updating these etags on the page, it will trigger a mediawiki
+page change whenever any of the other pages change. If you watch that page,
+you'll be effectively watching all the other external pages.
