@@ -19,27 +19,18 @@ __copyright__ = "Copyright Danny O'Brien"
 __contributors__ = None
 __license__ = "GPL v3"
 
-import mechanize
-import urlparse
-
-
 from pywikipediabot import wikipedia
-from userlistpage import UserListPage
-
-       
+from userlistpage import user_list_since_user
 
 def main(args):
     noisebridge = wikipedia.Site('en')
-    browser = mechanize.Browser()
     if len(args) > 0:
         lastUser = args[0]
     else:
         lastUser = 'SysFreak'
-    list_last_users = urlparse.urljoin(noisebridge.siteinfo()['base'], noisebridge.get_address("Special:ListUsers"))
-    f = list_last_users+'&username=%s&creationSort=1&limit=500' % lastUser
-    print f
-    r = browser.open(f)
-    users = UserListPage(noisebridge, r).getUsers()
+   
+    users = user_list_since_user(noisebridge, lastUser).getUsers()
+
     for i in users:
         if not i.hadUserPage():
             continue

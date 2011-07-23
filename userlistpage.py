@@ -25,6 +25,20 @@ import os
 
 from pywikipediabot import wikipedia
 import userlib
+import urlparse
+
+def user_list_since_user(site, lastUser):
+    """ Maximum number of users = 2000 """
+    return user_list_from_page("Special:ListUsers", site , '&username=%s&creationSort=1&limit=2000' % lastUser)
+
+ 
+def user_list_from_page(page, site, query):
+    url = urlparse.urljoin(site.siteinfo()['base'], site.get_address(page))
+    f = url +"?"+query
+    browser = mechanize.Browser()
+    r = browser.open(f)
+    return UserListPage(site, r)
+
 
 class UserFromUserList(userlib.User):
     """ Subclassed wikipedia user. 
@@ -39,7 +53,6 @@ class UserFromUserList(userlib.User):
     
     def forceUserPage(self, exist = True):
         self.user_page_exists = exist
-
 
 class UserListPage:
     """ When fed a Wikipedia site and a mechanize response to a user list page,
