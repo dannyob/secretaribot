@@ -19,97 +19,15 @@ __copyright__ = "Copyright Danny O'Brien"
 __contributors__ = None
 __license__ = "GPL v3"
 
-import unittest2 as unittest
 import mechanize
-from lxml import html
-from lxml import cssselect
 import urlparse
 
-import os
 
 from pywikipediabot import wikipedia
-import userlib # pywikipedia userlib should be on sys.path thanks to pywikipediabot
+from userlistpage import UserListPage
 
-class UserFromUserList(userlib.User):
-    """ Subclassed wikipedia user. 
-    The href links to the user wiki page in a user list page have a class="new"
-    attribute when there's no user page created yet. We use this fact to hint
-    that some page don't have user pages without having to try and check via API."""
+       
 
-    def hadUserPage(self):
-        if hasattr(self,'user_page_exists'):
-            return self.user_page_exists
-        return True
-    
-    def forceUserPage(self, exist = True):
-        self.user_page_exists = exist
-
-
-class UserListPage:
-    """ When fed a Wikipedia site and a mechanize response to a user list page,
-    will parse and return a list of users. """
-    def __init__(self, site, response):
-        self.response = response
-        self.lxml_root = html.parse(self.response).getroot() 
-        self.site = site
-
-    def getUsers(self):
-        ula = cssselect.CSSSelector('div.mw-spcontent > ul > li > a')
-        list_links = ula(self.lxml_root)
-        total_users = []
-        for link in list_links:
-            if 'User:' not in link.attrib['href']:
-                continue
-            new_user = UserFromUserList(self.site, link.text)
-            total_users.append(new_user)
-            if link.get('class') == 'new':
-                new_user.forceUserPage(False)
-            else:
-                new_user.forceUserPage(True)
-        return total_users
-
-
-class UserListPageTest(unittest.TestCase):
-    def setUp(self):
-        self.noisebridge = wikipedia.Site('en')
-        self.browser = mechanize.Browser()
-        f = 'file://' + os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),'t/index.php.htm'))
-        self.r = self.browser.open(f)
-
-    def test_canBeCreatedFromAMechanizeObject(self):
-        up = UserListPage(self.noisebridge, self.r)
-        self.assert_(up)
-        return
-
-    def test_canFindOneName(self):
-        up = UserListPage(self.noisebridge, self.r)
-        m = up.getUsers()
-        self.assertGreaterEqual(len(m), 1)
-
-    def test_canFindOneUser(self):
-        up = UserListPage(self.noisebridge, self.r)
-        self.assertIsInstance(up.getUsers()[0], userlib.User )
-
-    def test_canFindSpecificUser(self):
-        up = UserListPage(self.noisebridge, self.r)
-        gu = up.getUsers()
-        self.assertIn('Blackwing', [ i.name() for i in gu  ])
-
-    def test_hasCorrectCountOfUsers(self):
-        up = UserListPage(self.noisebridge, self.r)
-        gu = up.getUsers()
-        self.assertEquals(len(gu), 500) 
-
-    def test_canDiscoverWhoHasUserListPage(self):
-        up = UserListPage(self.noisebridge, self.r)
-        gu = up.getUsers()
-        with_userpages = [i for i in gu if i.hadUserPage() ]
-        without_userpages = [i for i in gu if not i.hadUserPage() ]
-        self.assertTrue('Blackwing' in [i.name() for i in with_userpages])
-        self.assertTrue('Blackwing' not in [i.name() for i in without_userpages])
-        self.assertTrue('EmmaWatson0' in [i.name() for i in without_userpages])
-        self.assertTrue('EmmaWatson0' not in [i.name() for i in with_userpages])
-        
 def main(args):
     noisebridge = wikipedia.Site('en')
     browser = mechanize.Browser()
