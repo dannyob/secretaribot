@@ -32,14 +32,20 @@ def main(args):
     users = user_list_since_user(noisebridge, lastUser).getUsers()
 
     for i in users:
-        if not i.hadUserPage():
-            continue
         print ">>> ",i.name()
-        print i.getUserPage().get()
+        if i.isBlocked():
+            continue
+        try:
+            m = i.contributions(limit=1).next()
+            print "Last edit:",m
+        except StopIteration:
+            pass
         decision = raw_input("Spam? [y/N]")
         if decision.upper() == "Y":
             print "Despamming"
-            i.getUserPage().delete("Spam (deleted by [Secretaribot] )", prompt = False)
+            for each_page in i.contributions():
+                print each_page
+                each_page[0].delete("Spam (deleted by [Secretaribot] )", prompt = False)
             i.block(reason="Spam: deleted by [Secretaribot]", expiry="infinite", onAutoblock = True, allowUsertalk = False, anon = False )
 
 
