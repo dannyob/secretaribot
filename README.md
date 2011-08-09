@@ -22,10 +22,20 @@ If no, goes onto next
 
 Meta-helper script to write the README in this directory to the Secretaribot page on the NB wik.
 
+### merge_blocked_users.py ###
+
+Merge (and then delete) all blocked users into a single, uber-spam account.
+
+'And nothing of value was lost'
+
 ### pywikipediabot.py ###
 
 Looks for and loads the pywikipediabot library from environment variable
 $PYWIKIBOT_DIR.
+
+### userlistpage.py ###
+
+Utilities for getting lists of users from mediawiki installs
 
 ### www_watch.py ###
 

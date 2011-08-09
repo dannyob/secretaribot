@@ -14,10 +14,11 @@ __copyright__ = "Copyright Danny O'Brien"
 __contributors__ = None
 __license__ = "GPL v3"
 
-import unittest2 as unittest
 
 from lxml import html
 from lxml import cssselect
+
+import unittest
 
 import mechanize
 

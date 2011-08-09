@@ -112,8 +112,6 @@ class WikiTable():
         self.wiki_to_dict()
         return WikiTable(WikiTable._stringify(d, self.header, self.fields, self.real_fields))
         
-        
-
 class WikiTableConversions(unittest.TestCase):
     def setUp(self):
         self.mup = '''{| class="wikitable"
