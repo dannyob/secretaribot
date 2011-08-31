@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 ##
-# death_to_wikispammers.py - helps quickly delete spam in spuriously created userpages
+# death_to_wikispammers.py - helps quickly delete spam in
+# spuriously created userpages
 ###
 """death_to_wikispammers
 
@@ -22,22 +23,23 @@ __license__ = "GPL v3"
 from pywikipediabot import wikipedia
 from userlistpage import user_list_since_user
 
+
 def main(args):
     noisebridge = wikipedia.Site('en')
     if len(args) > 0:
         lastUser = args[0]
     else:
-        lastUser = 'SysFreak'
-   
+        lastUser = 'Cypherpunks'
+
     users = user_list_since_user(noisebridge, lastUser).getUsers()
 
     for i in users:
-        print ">>> ",i.name()
+        print ">>> ", i.name()
         if i.isBlocked():
             continue
         try:
             m = i.contributions(limit=1).next()
-            print "Last edit:",m
+            print "Last edit:", m
         except StopIteration:
             pass
         decision = raw_input("Spam? [y/N]")
@@ -45,11 +47,17 @@ def main(args):
             print "Despamming"
             for each_page in i.contributions():
                 print each_page
-                each_page[0].delete("Spam (deleted by [Secretaribot] )", prompt = False)
-            i.block(reason="Spam: deleted by [Secretaribot]", expiry="infinite", onAutoblock = True, allowUsertalk = False, anon = False )
+                each_page[0].delete("Spam (deleted by [Secretaribot] )",
+                        prompt=False)
+            i.block(reason="Spam: deleted by [Secretaribot]",
+                    expiry="infinite", onAutoblock=True,
+                    allowUsertalk=False, anon=False)
 
 
-import sys, getopt
+import sys
+import getopt
+
+
 class Main():
     """ Encapsulates option handling. Subclass to add new options,
         add 'handle_x' method for an -x option,
@@ -62,16 +70,20 @@ class Main():
         """ Use this to generate a Usage message """
         def __init__(self, msg):
             self.msg = msg
+
     def __init__(self):
-        handlers  = [i[7:] for i in dir(self) if i.startswith('handle_') ]
+        handlers = [i[7:] for i in dir(self) if i.startswith('handle_')]
         self.shortopts = ''.join([i for i in handlers if len(i) == 1])
         self.longopts = [i for i in handlers if (len(i) > 1)]
+
     def handler(self, option):
         i = 'handle_%s' % option.lstrip('-')
         if hasattr(self, i):
             return getattr(self, i)
+
     def default_main(self, args):
         print sys.argv[0], " called with ", args
+
     def handle_help(self, v):
         """ Shows this message """
         print sys.modules.get(__name__).__doc__
@@ -88,7 +100,7 @@ class Main():
                     print '-%s' % i,
                 else:
                     print '--%s' % i,
-            print 
+            print
             print d
         sys.exit(0)
     handle_h = handle_help
@@ -97,14 +109,15 @@ class Main():
         """ Runs test suite for file """
         import doctest
         import unittest
-        suite = unittest.defaultTestLoader.loadTestsFromModule(sys.modules.get(__name__))
+        suite = unittest.defaultTestLoader.loadTestsFromModule(
+                sys.modules.get(__name__))
         suite.addTest(doctest.DocTestSuite())
         runner = unittest.TextTestRunner()
         runner.run(suite)
         sys.exit(0)
     handle_t = handle_test
 
-    def run(self, main= None, argv=None):
+    def run(self, main=None, argv=None):
         """ Execute main function, having stripped out options and called the
         responsible handler functions within the class. Main defaults to
         listing the remaining arguments.
@@ -115,12 +128,13 @@ class Main():
             argv = sys.argv
         try:
             try:
-                opts, args = getopt.getopt(argv[1:], self.shortopts, self.longopts)
+                opts, args = getopt.getopt(argv[1:],
+                                 self.shortopts, self.longopts)
             except getopt.error, msg:
                 raise self.Usage(msg)
             for o, a in opts:
                 (self.handler(o))(a)
-            return main(args) 
+            return main(args)
         except self.Usage, err:
             print >>sys.stderr, err.msg
             self.handle_help(None)
@@ -128,4 +142,3 @@ class Main():
 
 if __name__ == "__main__":
     sys.exit(Main().run(main) or 0)
-
