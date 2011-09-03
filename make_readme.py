@@ -15,13 +15,14 @@ __contributors__ = None
 __license__ = "GPL v3"
 
 
-import subprocess,sys
+import subprocess, sys
 
 from pywikipediabot import wikipedia
 import glob
 
+
 def get_intro(python_file):
-    f = open(python_file,'r')
+    f = open(python_file, 'r')
     comment = []
     l = f.readline().strip()
     while (l[:3] != '"""'):

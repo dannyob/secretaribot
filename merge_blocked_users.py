@@ -20,19 +20,20 @@ from pywikipediabot import wikipedia
 import userlistpage
 import userlib
 
+
 def mergeUser(site, olduser, newuser, delete=False):
     predata = {}
-    predata['olduser']=olduser.username
-    predata['newuser']=newuser.username
+    predata['olduser'] = olduser.username
+    predata['newuser'] = newuser.username
     if predata['olduser'] == predata['newuser']:
         return (False, False)
     if delete:
-        predata['deleteuser']="1"
+        predata['deleteuser'] = "1"
     else:
-        predata['deleteuser']="0"
-    predata['token']=site.getToken(sysop = True)
+        predata['deleteuser'] = "0"
+    predata['token'] = site.getToken(sysop=True)
 
-    (r, text) = site.postForm('/wiki/Special:UserMerge', predata, sysop=True)
+    (r, text) = site.postForm('/wiki/Special:UserMerge', predata, sysop=T rue)
     if ('Merge from' in text) and ('is complete' in text):
         merge_succeed = True
     else:
@@ -43,6 +44,7 @@ def mergeUser(site, olduser, newuser, delete=False):
         delete_succeed = False
     return (merge_succeed, delete_succeed)
 
+
 def main(args):
     if not args:
         initial_user = "SpammerHellDontDelete"
@@ -52,18 +54,20 @@ def main(args):
     nb = wikipedia.Site('en', "noisebridge")
     spam_user = userlib.User(nb, "SpammerHellDontDelete")
 
-
     ul = userlistpage.user_list_since_user(nb, initial_user).getUsers()
     for i in ul:
         print i
         if i.isBlocked():
-            print "Merging",i
+            print "Merging", i
             (merged, deleted) = mergeUser(nb, i, spam_user, delete=True)
             print "Merged:", merged
             print "Deleted:", deleted
 
 
-import sys, getopt
+import sys
+import getopt
+
+
 class Main():
     """ Encapsulates option handling. Subclass to add new options,
         add 'handle_x' method for an -x option,
@@ -76,16 +80,20 @@ class Main():
         """ Use this to generate a Usage message """
         def __init__(self, msg):
             self.msg = msg
+
     def __init__(self):
-        handlers  = [i[7:] for i in dir(self) if i.startswith('handle_') ]
+        handlers = [i[7:] for i in dir(self) if i.startswith('handle_')]
         self.shortopts = ''.join([i for i in handlers if len(i) == 1])
         self.longopts = [i for i in handlers if (len(i) > 1)]
+
     def handler(self, option):
         i = 'handle_%s' % option.lstrip('-')
         if hasattr(self, i):
             return getattr(self, i)
+
     def default_main(self, args):
         print sys.argv[0], " called with ", args
+
     def handle_help(self, v):
         """ Shows this message """
         print sys.modules.get(__name__).__doc__
@@ -102,7 +110,7 @@ class Main():
                     print '-%s' % i,
                 else:
                     print '--%s' % i,
-            print 
+            print
             print d
         sys.exit(0)
     handle_h = handle_help
@@ -111,14 +119,15 @@ class Main():
         """ Runs test suite for file """
         import doctest
         import unittest
-        suite = unittest.defaultTestLoader.loadTestsFromModule(sys.modules.get(__name__))
+        suite = unittest.defaultTestLoader.loadTestsFromModule(
+                sys.modules.get(__name__))
         suite.addTest(doctest.DocTestSuite())
         runner = unittest.TextTestRunner()
         runner.run(suite)
         sys.exit(0)
     handle_t = handle_test
 
-    def run(self, main= None, argv=None):
+    def run(self, main=None, argv=None):
         """ Execute main function, having stripped out options and called the
         responsible handler functions within the class. Main defaults to
         listing the remaining arguments.
@@ -129,12 +138,13 @@ class Main():
             argv = sys.argv
         try:
             try:
-                opts, args = getopt.getopt(argv[1:], self.shortopts, self.longopts)
+                opts, args = getopt.getopt(argv[1:],
+                        self.shortopts, self.longopts)
             except getopt.error, msg:
                 raise self.Usage(msg)
             for o, a in opts:
                 (self.handler(o))(a)
-            return main(args) 
+            return main(args)
         except self.Usage, err:
             print >>sys.stderr, err.msg
             self.handle_help(None)
@@ -142,4 +152,3 @@ class Main():
 
 if __name__ == "__main__":
     sys.exit(Main().run(main) or 0)
-

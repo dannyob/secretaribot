@@ -28,39 +28,43 @@ from pywikipediabot import wikipedia
 import userlib
 import urlparse
 
+
 def user_list_since_user(site, lastUser):
     """ Maximum number of users = 2000 """
-    return user_list_from_page("Special:ListUsers", site , '&username=%s&creationSort=1&limit=2000' % lastUser)
+    return user_list_from_page("Special:ListUsers", site,
+            '&username=%s&creationSort=1&limit=2000' % lastUser)
 
- 
+
 def user_list_from_page(page, site, query):
     url = urlparse.urljoin(site.siteinfo()['base'], site.get_address(page))
-    f = url +"?"+query
+    f = url + "?" + query
     browser = mechanize.Browser()
     r = browser.open(f)
     return UserListPage(site, r)
 
 
 class UserFromUserList(userlib.User):
-    """ Subclassed wikipedia user. 
+    """ Subclassed wikipedia user.
     The href links to the user wiki page in a user list page have a class="new"
     attribute when there's no user page created yet. We use this fact to hint
-    that some page don't have user pages without having to try and check via API."""
+    that some page don't have user pages without having to try and check
+    via API."""
 
     def hadUserPage(self):
-        if hasattr(self,'user_page_exists'):
+        if hasattr(self, 'user_page_exists'):
             return self.user_page_exists
         return True
-    
+
     def forceUserPage(self, exist = True):
         self.user_page_exists = exist
+
 
 class UserListPage:
     """ When fed a Wikipedia site and a mechanize response to a user list page,
     will parse and return a list of users. """
     def __init__(self, site, response):
         self.response = response
-        self.lxml_root = html.parse(self.response).getroot() 
+        self.lxml_root = html.parse(self.response).getroot()
         self.site = site
 
     def getUsers(self):
@@ -83,7 +87,7 @@ class UserListPageTest(unittest.TestCase):
     def setUp(self):
         self.noisebridge = wikipedia.Site('en')
         self.browser = mechanize.Browser()
-        f = 'file://' + os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),'t/index.php.htm'))
+        f = 'file://' + os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), 't/index.php.htm'))
         self.r = self.browser.open(f)
 
     def test_canBeCreatedFromAMechanizeObject(self):
@@ -98,17 +102,17 @@ class UserListPageTest(unittest.TestCase):
 
     def test_canFindOneUser(self):
         up = UserListPage(self.noisebridge, self.r)
-        self.assertIsInstance(up.getUsers()[0], userlib.User )
+        self.assertIsInstance(up.getUsers()[0], userlib.User)
 
     def test_canFindSpecificUser(self):
         up = UserListPage(self.noisebridge, self.r)
         gu = up.getUsers()
-        self.assertIn('Blackwing', [ i.name() for i in gu  ])
+        self.assertIn('Blackwing', [ i.name() for i in gu ] )
 
     def test_hasCorrectCountOfUsers(self):
         up = UserListPage(self.noisebridge, self.r)
         gu = up.getUsers()
-        self.assertEquals(len(gu), 500) 
+        self.assertEquals(len(gu), 500)
 
     def test_canDiscoverWhoHasUserListPage(self):
         up = UserListPage(self.noisebridge, self.r)

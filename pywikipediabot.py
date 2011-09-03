@@ -15,7 +15,8 @@ __copyright__ = "Copyright Danny O'Brien"
 __contributors__ = None
 __license__ = "GPL v3"
 
-import os,sys
+import os
+import sys
 if 'PYWIKIBOT_DIR' in os.environ:
     sys.path.append(os.environ['PYWIKIBOT_DIR'])
 try:
@@ -23,14 +24,14 @@ try:
 except ImportError:
     if 'PYWIKIBOT_DIR' in os.environ:
         print """
-        **** 
-        Cannot find Pywikipediabot libraries (was looking in $PYWIKIBOT_DIR - %s).
+        ****
+        Can't find Pywikipediabot libs (was looking in $PYWIKIBOT_DIR - %s)
         ****""" % os.environ["PYWIKIBOT_DIR"]
     else:
         print """
         ****
-        Cannot find Pywikipediabot libraries. Suggest you check them out from 
-        http://pywikipediabot.sourceforge.net/ , and then set PYWIKIBOT_DIR environment 
-        variable to point to their directory
+        Cannot find Pywikipediabot libraries. Suggest you check them out from
+        http://pywikipediabot.sourceforge.net/ , then set PYWIKIBOT_DIR
+        environment variable to point to their directory
         ****"""
     raise
