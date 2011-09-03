@@ -28,6 +28,11 @@ Merge (and then delete) all blocked users into a single, uber-spam account.
 
 'And nothing of value was lost'
 
+### next_meeting.py ###
+
+Creates the next meeting page from the template on the wiki.
+Calculates the next ordinal number for the meeting ie (the 31811th Meeting etc)
+
 ### pywikipediabot.py ###
 
 Looks for and loads the pywikipediabot library from environment variable
