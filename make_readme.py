@@ -47,7 +47,7 @@ i = open("README.intro", 'r')
 o = open("README.md", 'w')
 o.write(i.read(-1))
 
-for i in glob.glob('*.py'):
+for i in glob.glob('*.py') + glob.glob('*.agi'):
     cm = get_intro(i)
     o.write(cm)
 o.close()

@@ -48,3 +48,10 @@ Goes out and checks a Wikipedia table full of links, and saves the etags from
 the headers; by updating these etags on the page, it will trigger a mediawiki
 page change whenever any of the other pages change. If you watch that page,
 you'll be effectively watching all the other external pages.
+
+### arooga.agi - call a bunch of people to 311 conf call ###
+
+Usage: /etc/asterisk/agi-bin/arooga.cgi
+
+Called by Asterisk dialplan, extracts callerid safely,
+sends it onto an email alias, records info in syslog.

@@ -1,0 +1,67 @@
+#!/usr/bin/python
+##
+# arooga.agi - Asterisk Gateway Interface script
+# to call a bunch of people to our conference call
+###
+"""arooga.agi - call a bunch of people to 311 conf call
+
+Usage: /etc/asterisk/agi-bin/arooga.cgi
+
+Called by Asterisk dialplan, extracts callerid safely,
+sends it onto an email alias, records info in syslog.
+
+"""
+
+__version__ = "0.1"
+__author__ = "Danny O'Brien <http://www.spesh.com/danny/>"
+__copyright__ = "Copyright Danny O'Brien"
+__contributors__ = None
+__license__ = "GPL v3"
+
+
+import sys
+import smtplib
+import syslog
+import re
+people_to_mail = ['nb311@noisebridge.net']
+people_to_mail = ['danny@spesh.com']
+
+
+def parse_agi_vars(instream):
+    agi_in = {}
+    while (1):
+        l = instream.readline().strip()
+        if l == '':
+            break
+        key, data = l.split(':')
+        key = key.strip()
+        data = data.strip()
+        if key != '':
+            agi_in[key] = data
+    return agi_in
+
+env = parse_agi_vars(sys.stdin)
+
+callerid = env.setdefault('agi_callerid', 'Unknown')
+callerid = re.sub('[^0-9]', '', callerid)[:20]
+
+callerid_name = env.setdefault('agi_calleridname', '?')
+callerid_name = re.sub('[^0-9A-Za-z ]', '', callerid_name)[:20]
+
+body = "%s (%s) called Noisebridge 311, please call into \
+        conf call at: +14154942858 ext. 2311" % \
+        (callerid, callerid_name)
+
+headers = """Subject: NB 311
+From: Secretaribot <secretary@noisebridge.net>
+To: Noisebridge 311 <nb311@noisebridge.net>\n
+"""
+s = smtplib.SMTP('localhost')
+
+message = headers + body
+
+s.sendmail('secretary@noisebridge.net', people_to_mail, message)
+s.quit()
+
+syslog.syslog(syslog.LOG_ALERT,
+    "Noisebridge 311 mailed a call out from " + callerid)
