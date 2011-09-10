@@ -8,3 +8,10 @@ This document is automagically created by make.py and README.intro in the
 Secretaribot repository at [github](https://github.com/dannyob/secretaribot),
 which is written out to the [Secretaribot's
 page](https://www.noisebridge.net/wiki/Secretaribot) on the Noisebridge wiki. 
+
+### General instructions ###
+
+For the wiki tools, you'll need the
+[pywikipediabot](http://pywikipediabot.sourceforge.net/) library stored
+somewhere, and point the environment variable PYWIKIBOT_DIR at it. Copy the
+'lib/noisebridge_family.py' into its 'families' directory.
