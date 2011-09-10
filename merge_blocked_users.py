@@ -33,7 +33,7 @@ def mergeUser(site, olduser, newuser, delete=False):
         predata['deleteuser'] = "0"
     predata['token'] = site.getToken(sysop=True)
 
-    (r, text) = site.postForm('/wiki/Special:UserMerge', predata, sysop=T rue)
+    (r, text) = site.postForm('/wiki/Special:UserMerge', predata, sysop=True)
     if ('Merge from' in text) and ('is complete' in text):
         merge_succeed = True
     else:
