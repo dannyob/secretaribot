@@ -29,7 +29,9 @@ def main(args):
     if len(args) > 0:
         lastUser = args[0]
     else:
-        lastUser = 'Cypherpunks'
+        f = open("/tmp/death_to_wikispammers_last_spammer","r")
+        lastUser = f.readline().strip()
+        f.close()
 
     users = user_list_since_user(noisebridge, lastUser).getUsers()
 
@@ -52,6 +54,9 @@ def main(args):
             i.block(reason="Spam: deleted by [Secretaribot]",
                     expiry="infinite", onAutoblock=True,
                     allowUsertalk=False, anon=False)
+            f = open("/tmp/death_to_wikispammers_last_spammer","w")
+            f.write(i.name())
+            f.close()
 
 
 import sys
