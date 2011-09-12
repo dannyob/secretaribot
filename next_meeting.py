@@ -6,6 +6,7 @@
 
 Creates the next meeting page from the template on the wiki.
 Calculates the next ordinal number for the meeting ie (the 31811th Meeting etc)
+Redirects 'Next meeting' and 'Last meeting' pages to point to correct minutes.
 
 """
 
@@ -78,14 +79,8 @@ def next_ordinal(site, last_page):
     else:
         return "XXXth"
 
-
-def main(args):
-    site = wikipedia.Site("en")
+def create_new_notes(site, last_page, next_page):
     template = wikipedia.Page(site, "Meeting_Notes_Template").get()
-
-    last_page = "Meeting_Notes_" + str(past_tuesday()).replace("-", "_")
-    next_page = "Meeting_Notes_" + str(future_tuesday()).replace("-", "_")
-
     template = re.sub("XXXth Meeting of Noisebridge",
             next_ordinal(site, last_page) + " Meeting of Noisebridge",
             template)
@@ -95,6 +90,27 @@ def main(args):
     else:
         future_page.put(template, u"Secretaribot says its time for the "
                 + next_ordinal(site, last_page) + " Noisebridge notes")
+
+def redirect_pages(site, last_page, next_page):
+    lm = wikipedia.Page(site, "last_meeting")
+    nm = wikipedia.Page(site, "next_meeting")
+    if lm.getRedirectTarget().title() != last_page:
+        print "Redirecting [[Last_meeting]] to ", last_page
+        lm.put("#REDIRECT [[%s]]" % last_page, "Secretaribot updating next meeting page")
+    else:
+        print "Last_meeting already points to correct page."
+    if nm.getRedirectTarget().title() != next_page:
+        print "Redirecting [[Next_meeting]] to ", next_page
+        nm.put("#REDIRECT [[%s]]" % next_page, "Secretaribot updating for next meeting page")
+    else:
+        print "Next_meeting already points to correct page."
+
+def main(args):
+    site = wikipedia.Site("en")
+    last_page = "Meeting Notes " + str(past_tuesday()).replace("-", " ")
+    next_page = "Meeting Notes " + str(future_tuesday()).replace("-", " ")
+    create_new_notes(site, last_page, next_page)
+    redirect_pages(site, last_page, next_page)
 
 import sys
 import getopt
