@@ -1,0 +1,3 @@
+[submodule "mailman-archive-scraper"]
+	path = mailman-archive-scraper
+	url = git@github.com:dannyob/mailman-archive-scraper.git
