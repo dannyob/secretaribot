@@ -9,6 +9,13 @@ Secretaribot repository at [github](https://github.com/dannyob/secretaribot),
 which is written out to the [Secretaribot's
 page](https://www.noisebridge.net/wiki/Secretaribot) on the Noisebridge wiki. 
 
+### General instructions ###
+
+For the wiki tools, you'll need the
+[pywikipediabot](http://pywikipediabot.sourceforge.net/) library stored
+somewhere, and point the environment variable PYWIKIBOT_DIR at it. Copy the
+'lib/noisebridge_family.py' into its 'families' directory.
+
 ### death_to_wikispammers ###
 
 Usage: death_to_wikispammers [username]
@@ -17,6 +24,15 @@ One by one, shows their user page via STDOUT.
 Delete user page and block for spam? it asks, [y/n]
 If yes, deletes user page, blocks user for spamming
 If no, goes onto next
+
+### make_list_rss.py ###
+
+Makes an RSS feed of all the noisebridge mailing lists.
+
+Uses a noisebridge fork of mailman-archive-scraper, kept at
+https://github.com/dannyob/mailman-archive-scraper/tree/noisebridge
+
+and added as a git submodule to this collection.
 
 ### make_readme.py ###
 
@@ -32,6 +48,7 @@ Merge (and then delete) all blocked users into a single, uber-spam account.
 
 Creates the next meeting page from the template on the wiki.
 Calculates the next ordinal number for the meeting ie (the 31811th Meeting etc)
+Redirects 'Next meeting' and 'Last meeting' pages to point to correct minutes.
 
 ### pywikipediabot.py ###
 
