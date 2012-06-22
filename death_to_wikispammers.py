@@ -29,34 +29,41 @@ def main(args):
     if len(args) > 0:
         lastUser = args[0]
     else:
-        f = open("/tmp/death_to_wikispammers_last_spammer","r")
-        lastUser = f.readline().strip()
-        f.close()
+        try:
+            f = open("/tmp/death_to_wikispammers_last_spammer","r")
+            lastUser = f.readline().strip()
+            f.close()
+        except IOError:
+            lastUser = 'Zephyr'
 
     users = user_list_since_user(noisebridge, lastUser).getUsers()
 
     for i in users:
         print ">>> ", i.name()
+        hasContributions = False
         if i.isBlocked():
             continue
         try:
             m = i.contributions(limit=1).next()
             print "Last edit:", m
+            hasContributions = True
         except StopIteration:
             pass
-        decision = raw_input("Spam? [y/N]")
-        if decision.upper() == "Y":
-            print "Despamming"
-            for each_page in i.contributions():
-                print each_page
-                each_page[0].delete("Spam (deleted by [Secretaribot] )",
-                        prompt=False)
-            i.block(reason="Spam: deleted by [Secretaribot]",
-                    expiry="infinite", onAutoblock=True,
-                    allowUsertalk=False, anon=False)
-            f = open("/tmp/death_to_wikispammers_last_spammer","w")
-            f.write(i.name())
-            f.close()
+        if hasContributions:
+            decision = raw_input("Spam? [y/N]")
+            if decision.upper() != "Y":
+                continue
+        print "Despamming"
+        for each_page in i.contributions():
+            print each_page
+            each_page[0].delete("Spam (deleted by [Secretaribot] )",
+                    prompt=False)
+        i.block(reason="Spam: deleted by [Secretaribot]",
+                expiry="infinite", onAutoblock=True,
+                allowUsertalk=False, anon=False)
+        f = open("/tmp/death_to_wikispammers_last_spammer","w")
+        f.write(i.name())
+        f.close()
 
 
 import sys
